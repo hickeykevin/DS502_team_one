@@ -33,15 +33,19 @@ Measures are continuous in raw dataset scaled from 0-1 (with 1 being more MDD li
 - Social_Productive
 - Somatic_PosSymp_Panic
 
+#### [Outcome Variable] 3 MDD Subtypes:
+Measures are binary 0 does not have, 1 
+- ANXIOUS_TYPE: Anxious depression subtype
+- ATYPICAL_TYPE: Atypical depression subtype
+- MELANCHOLIC_TYPE: Melancholic depression subtype
+
+
 #### [Predictor Variable] 10 Demographics
 - sex: categorical M and F
 - Age: age in years numeric type with 2 decimal places
 - Years_Education
 - sBMI: BMI score
 - MDD_DUR: Duration on depression in years
-- ANXIOUS_TYPE: Anxious depression subtype
-- ATYPICAL_TYPE: Atypical depression subtype
-- MELANCHOLIC_TYPE: Melancholic depression subtype
 - Treatment_group: Drug treatment categories of 1, 2, 3 for MDD and treatment category of 4 for Control
 - sELSTOT: Early Life Stress Total Score
 
