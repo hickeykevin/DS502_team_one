@@ -5,7 +5,7 @@ Repository for DS501 Final Group Project
 ## List of Variables in Data for Analysis:
 
 #### [Outcome Variable] 11 MDD Related Clinical Measures: 
-Measures are continuous in raw dataset. Measures are binary in cleaned dataset based on clinician chosen cutoff (with 1 being high).
+Measures are continuous
 - sBCog45S: Brief Risk resilience Index for Screening Emotional/Cognitive Resilience
 - sBNeg45S: Brief Risk resilience Index for Screening Negativity Bias
 - sBSoc45S: Brief Risk resilience Index for Screening Social Connectedness
@@ -39,6 +39,9 @@ Measures are binary 0 does not have, 1
 - ATYPICAL_TYPE: Atypical depression subtype
 - MELANCHOLIC_TYPE: Melancholic depression subtype
 
+#### [Outcome Variable] Group:
+- Group: binary MDD or Control
+
 
 #### [Predictor Variable] 10 Demographics
 - sex: categorical M and F
@@ -46,8 +49,9 @@ Measures are binary 0 does not have, 1
 - Years_Education
 - sBMI: BMI score
 - MDD_DUR: Duration on depression in years
-- Treatment_group: Drug treatment categories of 1, 2, 3 for MDD and treatment category of 4 for Control
+- TREATMENT: Drug treatment categories of 1, 2, 3 for MDD and treatment category of 4 for Control
 - sELSTOT: Early Life Stress Total Score
+- Response: binary yes or no responded to treatment
 
 #### [Predictor Variable] 10 Event-related potential waveform (ERP)
 Averaging brain activity in EEG as a numeric variable. 
