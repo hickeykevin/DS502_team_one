@@ -116,7 +116,8 @@ for npca in tqdm([0,3,5,7,9]):
             n_features_to_select=n_features,
             direction="forward",
             scoring="f1",
-            cv=3
+            cv=3,
+            n_jobs=2
         )
 
         
