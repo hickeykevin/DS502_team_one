@@ -20,73 +20,47 @@ warnings.filterwarnings("ignore")
 from sklearn.model_selection import cross_validate, StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.compose import ColumnTransformer
+from sklearn.base import TransformerMixin, BaseEstimator
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer 
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix, make_scorer, ConfusionMatrixDisplay, confusion_matrix
 from imblearn.pipeline import Pipeline
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler, SMOTE
 
 #%%
-def read_data(p: str):
-    data_file = Path(p)
-    data = pd.read_csv(data_file)
-    return data
+data = pd.read_csv("Data/analysis_ready.csv")
 
-data = read_data("/mnt/c/Users/kevin/Documents/wpi_course_materials/DS502/DS502_team_one/Data/data_almost_analysis_ready.csv")
-
-# %%
-target = "ATYPICAL_TYPE"
-clinical_measures = [
-    "sBCog45S",
-    "sBNeg45S",
-    "sBSoc45S",
-    "sERQreap",
-    "sERQsupp",
-    "sAnx42",
-    "sDepr42",
-    "sStres42",
-    "HDRS17",
-    "sQIDS_tot",
-    "SOFAS_RAT"
-]
-
-demographics = [
-    "sex",
-    "Age",
-    "Years_Education",
-    "sBMI",
-    "MDD_DUR",
-    "TREATMENT",
-]
-
-sELSTOT = ["sELSTOT"]
-
-erp_measures = [
-    "std_N1_amp_min_pub_Fz",
-    "std_N1_amp_min_pub_Cz",
-    "trg_N1_amp_min_pub_Fz",
-    "trg_N1_amp_min_pub_Cz",
-    "std_P300_amp_max_Fz",
-    "std_P300_amp_max_Cz",
-    "std_P300_amp_max_Pz",
-    "trg_P300_amp_max_Cz",
-    "trg_P300_amp_max_Fz",
-    "trg_P300_amp_max_Pz",
-]
-
-snips = [x for x in data.columns if x[0:2] == "rs"]
-
-# %%
-all_features = [sELSTOT, demographics, erp_measures, clinical_measures, snips]
-all_features = list(chain(*all_features))
-
+target = "ANXIOUS_TYPE"
+columns_to_drop = [
+    target,
+    "Responder", 
+    "ATYPICAL_TYPE", 
+    "MELANCHOLIC_TYPE",
+    "subjID", 
+    "Group", 
+    "sBCog45S_6",
+    "sBNeg45S_6",
+    "sBSoc45S_6",
+    "sERQreap_6",
+    "sERQsupp_6",
+    "sAnx42_6",
+    "sDepr42_6",
+    "sStres42_6",
+    "HDRS17_6",
+    "sQIDS_tot_6",
+    "SOFAS_RAT_6" 
+    ]
 X = data.loc[data[target].notna()].sample(frac=1)
 X = X[X[target] != "2"]
 y = X.loc[:, target].replace({"Y": 1, "N": 0})
-X = X.loc[:, all_features]
+X = X.drop(columns=columns_to_drop)
 #%%
 
 info_df = pd.DataFrame(columns=["pipeline", "n_pca", "num_features", "cv_scores", "mean_score", "std_score"])
@@ -97,7 +71,7 @@ SimpleImputer.get_feature_names_out = (lambda self, names=None:
 for npca in tqdm([0,3,5,7,9]):
     
     # Classifier
-    clf = GradientBoostingClassifier(random_state=42)
+    clf = RandomForestClassifier(class_weight="balanced", random_state=42)
     
     numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
     categorical_features = X.select_dtypes(include=['object', 'bool']).columns
@@ -114,7 +88,7 @@ for npca in tqdm([0,3,5,7,9]):
                         ("cat", categorical_preprocessing, categorical_features),
                 ]
         )        
-    elif npca != 0:
+    else:
         snips_pca = PCA(n_components=npca)
         snips_transformer = Pipeline(
             steps = [
@@ -185,8 +159,5 @@ for npca in tqdm([0,3,5,7,9]):
     info = pd.Series(info, index=info_df.columns)
     info_df = info_df.append(info, ignore_index=True)
     
-    
-#display(info_df.sort_values(by="mean_score", ascending=False))
-print(info_df.sort_values(by="mean_scores", ascending=False))   
-
+print(info_df.sort_values(by="mean_score", ascending=False))   
 # %%

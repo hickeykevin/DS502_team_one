@@ -49,17 +49,43 @@ data = pd.read_csv("Data/analysis_ready.csv")
 target = "Responder"
 
 # Sepearte the data from the target;
-# Drop a instances where the target is missing
+# Drop instances where the target is missing
 # If predicting an MDD subtype, will also drop instances == 2;
 # This indicates the subject was part of the control 
-X = data.loc[data[target].notna()].sample(frac=1)  #Shuffle the instances randomly
+X = data.loc[data[target].notna()].sample(frac=1)
 y = X.loc[:, target].replace({"N":0, "Y":1})
-X = X.drop(columns=[target])
+
+# Avoid data leakage, we drop the 6-week follow up features
+# And drop unnecessary features like subjID and Group
+columns_to_drop = [
+    target, 
+    "subjID", 
+    "Group", 
+    "sBCog45S_6",
+    "sBNeg45S_6",
+    "sBSoc45S_6",
+    "sERQreap_6",
+    "sERQsupp_6",
+    "sAnx42_6",
+    "sDepr42_6",
+    "sStres42_6",
+    "HDRS17_6",
+    "sQIDS_tot_6",
+    "SOFAS_RAT_6" 
+    ]
+X = X.drop(columns=columns_to_drop)
+
+
+#############################################
+# Model Building
+#############################################
+
 
 # Instantiate an empty dataframe to house results from experiments below
 info_df = pd.DataFrame(columns=["pipeline", "n_pca", "penalty", "num_features", "cv_scores", "mean_score", "std_score"])
 
 # Loop through parameters to experiment with
+# Logistic Regression Regularization penalty
 for penalty in tqdm(["l1", "l2"]):
     
     # Number of pca to use on SNIPS features
@@ -73,7 +99,7 @@ for penalty in tqdm(["l1", "l2"]):
         numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
         categorical_features = X.select_dtypes(include=['object', 'bool']).columns
         
-        # define steps to be done on numeric features
+        # Define steps to be done on numeric features
         numeric_preprocessing = Pipeline(
             steps=[
                 ("imputer", SimpleImputer(strategy="mean")),
@@ -81,6 +107,7 @@ for penalty in tqdm(["l1", "l2"]):
                 ]
         )
         
+        # Define steps to be don on categorical features
         categorical_preprocessing = OneHotEncoder(handle_unknown="ignore")
         
         # For experiment with no pca on SNIPS features

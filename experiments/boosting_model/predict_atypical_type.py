@@ -30,61 +30,33 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler, SMOTE
 
 #%%
-def read_data(p: str):
-    data_file = Path(p)
-    data = pd.read_csv(data_file)
-    return data
+data = pd.read_csv("Data/analysis_ready.csv")
 
-data = read_data("/mnt/c/Users/kevin/Documents/wpi_course_materials/DS502/DS502_team_one/Data/data_almost_analysis_ready.csv")
-
-# %%
-target = "Responder"
-clinical_measures = [
-    "sBCog45S",
-    "sBNeg45S",
-    "sBSoc45S",
-    "sERQreap",
-    "sERQsupp",
-    "sAnx42",
-    "sDepr42",
-    "sStres42",
-    "HDRS17",
-    "sQIDS_tot",
-    "SOFAS_RAT"
-]
-
-demographics = [
-    "sex",
-    "Age",
-    "Years_Education",
-    "sBMI",
-    "MDD_DUR",
-    "TREATMENT",
-]
-
-sELSTOT = ["sELSTOT"]
-
-erp_measures = [
-    "std_N1_amp_min_pub_Fz",
-    "std_N1_amp_min_pub_Cz",
-    "trg_N1_amp_min_pub_Fz",
-    "trg_N1_amp_min_pub_Cz",
-    "std_P300_amp_max_Fz",
-    "std_P300_amp_max_Cz",
-    "std_P300_amp_max_Pz",
-    "trg_P300_amp_max_Cz",
-    "trg_P300_amp_max_Fz",
-    "trg_P300_amp_max_Pz",
-]
-
-snips = [x for x in data.columns if x[0:2] == "rs"]
-
-# %%
-all_features = [sELSTOT, demographics, erp_measures, clinical_measures, snips]
-all_features = list(chain(*all_features))
+target = "ATYPICAL_TYPE"
+columns_to_drop = [
+    target,
+    "Responder", 
+    "ANXIOUS_TYPE", 
+    "MELANCHOLIC_TYPE",
+    "subjID", 
+    "Group", 
+    "sBCog45S_6",
+    "sBNeg45S_6",
+    "sBSoc45S_6",
+    "sERQreap_6",
+    "sERQsupp_6",
+    "sAnx42_6",
+    "sDepr42_6",
+    "sStres42_6",
+    "HDRS17_6",
+    "sQIDS_tot_6",
+    "SOFAS_RAT_6" 
+    ]
 X = data.loc[data[target].notna()].sample(frac=1)
-y = X.loc[:, target].replace({"N":0, "Y":1})
-X = X.loc[:, all_features]
+X = X[X[target] != "2"]
+y = X.loc[:, target].replace({"Y": 1, "N": 0})
+X = X.drop(columns=columns_to_drop)
+
 #%%
 
 info_df = pd.DataFrame(columns=["pipeline", "n_pca", "num_features", "cv_scores", "mean_score", "std_score"])
@@ -183,7 +155,7 @@ for npca in tqdm([0,3,5,7,9]):
     info = pd.Series(info, index=info_df.columns)
     info_df = info_df.append(info, ignore_index=True)
     
-#display(info_df.sort_values(by="mean_score", ascending=False))
-print(info_df.sort_values(by="mean_scores", ascending=False))   
+    
+print(info_df.sort_values(by="mean_score", ascending=False))   
 
 # %%
