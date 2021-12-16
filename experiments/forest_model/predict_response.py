@@ -83,7 +83,7 @@ for npca in tqdm([0,3]):
                 ]
         )        
     elif npca != 0:
-        snips_pca = PCA(n_components=npca)s
+        snips_pca = PCA(n_components=npca)
         snips_transformer = Pipeline(
             steps = [
                 ("snips_imputer", SimpleImputer(strategy="mean")),
