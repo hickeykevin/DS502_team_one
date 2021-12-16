@@ -156,6 +156,8 @@ for npca in tqdm([0,3,5,7,9]):
     info_df = info_df.append(info, ignore_index=True)
     
     
-print(info_df.sort_values(by="mean_score", ascending=False))   
+print(info_df.sort_values(by="mean_score", ascending=False))  
+info_df.to_csv("Results/Boost_predict_anxious_results.csv")         
+
 
 # %%
