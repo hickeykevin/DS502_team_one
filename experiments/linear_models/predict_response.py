@@ -165,7 +165,9 @@ for penalty in tqdm(["l1", "l2"]):
         info = pd.Series(info, index=info_df.columns)
         info_df = info_df.append(info, ignore_index=True)
 
-print(info_df.sort_values(by="mean_score", ascending=False))       
+print(info_df.sort_values(by="mean_score", ascending=False)) 
+info_df.to_csv("Results/LR_predict_response_results.csv")         
+
 
 
 
