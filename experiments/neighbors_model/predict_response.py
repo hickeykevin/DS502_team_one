@@ -146,3 +146,5 @@ for npca in tqdm([0,3,5,7,9]):
 print(info_df.sort_values(by="mean_score", ascending=False))      
 
 
+
+# %%
